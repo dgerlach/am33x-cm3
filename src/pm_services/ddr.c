@@ -30,7 +30,6 @@
 void ddr_io_suspend(void)
 {
 	unsigned int var;
-
 	/* mddr mode selection required only for PG1.0 */
 	if (soc_id == AM335X_SOC_ID && soc_rev == AM335X_REV_ES1_0) {
 		var = __raw_readl(DDR_IO_CTRL_REG);
@@ -41,20 +40,20 @@ void ddr_io_suspend(void)
 	/* Weak pull down for DQ, DM */
 	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA0_IOCTRL);
 	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA1_IOCTRL);
+	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA2_IOCTRL);
+	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA3_IOCTRL);
 
 	/* Different sleep sequences for DDR2 and DDR3 */
-	if (mem_type == MEM_TYPE_DDR3) {
 		/* Weak pull down for macro CMD0/1 */
-		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD0_IOCTRL);
-		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD1_IOCTRL);
+//		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD0_IOCTRL);
+//		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD1_IOCTRL);
 
 		/*
 		 * Weak pull down for macro CMD2
 		 * exception: keep DDR_RESET pullup
 		 */
-		__raw_writel(SUSP_IO_PULL_CMD2, DDR_CMD2_IOCTRL);
+//		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD2_IOCTRL);
 
-	}
 }
 
 void ddr_io_resume(void)
@@ -70,16 +69,17 @@ void ddr_io_resume(void)
 	}
 
 	/* Different sleep sequences for DDR2 and DDR3 */
-	if (mem_type == MEM_TYPE_DDR3) {
 	/* Disable the pull for CMD2/1/0 */
-		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD2_IOCTRL);
-		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD1_IOCTRL);
-		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD0_IOCTRL);
-	}
+//		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD2_IOCTRL);
+//		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD1_IOCTRL);
+//		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD0_IOCTRL);
 
 	/* Disable the pull for DATA1/0 */
-	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA1_IOCTRL);
-	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA0_IOCTRL);
+
+	//__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA3_IOCTRL);
+	//__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA2_IOCTRL);
+	//__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA1_IOCTRL);
+	//__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA0_IOCTRL);
 }
 
 /* same offsets for SA and Aegis */
