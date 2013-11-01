@@ -31,11 +31,17 @@ void ddr_io_suspend(void)
 {
 	unsigned int var;
 	/* mddr mode selection required only for PG1.0 */
-//	if (soc_id == AM335X_SOC_ID && soc_rev == AM335X_REV_ES1_0) {
+	if (soc_id == AM335X_SOC_ID && soc_rev == AM335X_REV_ES1_0) {
 		var = __raw_readl(DDR_IO_CTRL_REG);
 		var |= DDR_IO_MDDR_SEL;
 		__raw_writel(var, DDR_IO_CTRL_REG);
-//	}
+	}
+
+	/* HACK: Enable dynamic power down in CTRL_SDRAM_CONFIG_EXT reg */
+
+	var = __raw_readl(0x44E11460);
+	var |= 0x100;
+	__raw_writel(var, 0x44E11460);
 
 	/* Weak pull down for DQ, DM */
 	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA0_IOCTRL);
@@ -61,12 +67,12 @@ void ddr_io_resume(void)
 	unsigned int var;
 
 	/* mddr mode selection required only for PG1.0 */
-//	if (soc_id == AM335X_SOC_ID && soc_rev == AM335X_REV_ES1_0) {
+	if (soc_id == AM335X_SOC_ID && soc_rev == AM335X_REV_ES1_0) {
 		var = __raw_readl(DDR_IO_CTRL_REG);
 		var &= ~DDR_IO_MDDR_SEL;
 		/* Take out IO of mDDR mode */
 		__raw_writel(var, DDR_IO_CTRL_REG);
-//	}
+	}
 
 	/* Different sleep sequences for DDR2 and DDR3 */
 	/* Disable the pull for CMD2/1/0 */
