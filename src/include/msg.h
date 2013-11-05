@@ -15,7 +15,7 @@
 
 #include <stddef.h>
 
-#define CM3_VERSION		0x18333
+#define CM3_VERSION		0x185
 
 /*
  * 9-4 = VTT GPIO PIN (6 Bits)
@@ -32,6 +32,7 @@
 /* Memory type passed in IPC register */
 #define MEM_TYPE_DDR2		2
 #define MEM_TYPE_DDR3		3
+#define MEM_TYPE_LPDDR2		4
 
 #define RESUME_REG		0x0
 #define STAT_ID_REG		0x1
@@ -131,7 +132,7 @@ extern struct cmd_data cmd_global_data;
 extern struct state_handler cmd_handlers[];
 
 /* Board specifics populated in IPC_REG4 */
-extern int mem_type;		/* Memory Type 2 = DDR2, 3 = DDR3 */
+extern int mem_type;		/* Memory Type 2 = DDR2, 3 = DDR3, 4 = LPDDR2 */
 extern bool vtt_toggle; 	/* VTT Toggle  true = required */
 extern int vtt_gpio_pin; 	/* VTT GPIO Pin */
 

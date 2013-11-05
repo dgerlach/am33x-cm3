@@ -36,7 +36,6 @@ const enum hwmod_id am43xx_essential_hwmods[] = {
 	HWMOD_EMIF_FW,
 	HWMOD_OTFA_EMIF,
 	HWMOD_OCMCRAM,
-	HWMOD_IEEE5000,
 	HWMOD_END,
 };
 

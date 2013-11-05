@@ -46,3 +46,4 @@ const enum hwmod_id am335x_interconnect_hwmods[] = {
 	HWMOD_L3,
 	HWMOD_END,
 };
+

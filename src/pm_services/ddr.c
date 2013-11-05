@@ -37,28 +37,30 @@ void ddr_io_suspend(void)
 		__raw_writel(var, DDR_IO_CTRL_REG);
 	}
 
-	/* HACK: Enable dynamic power down in CTRL_SDRAM_CONFIG_EXT reg */
-
-	var = __raw_readl(0x44E11460);
-	var |= 0x100;
-	__raw_writel(var, 0x44E11460);
-
 	/* Weak pull down for DQ, DM */
 	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA0_IOCTRL);
 	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA1_IOCTRL);
-	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA2_IOCTRL);
-	__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA3_IOCTRL);
 
-	/* Different sleep sequences for DDR2 and DDR3 */
+	if (mem_type == MEM_TYPE_LPDDR2) {
+		/* Configure LPDDR2 Dynamic power down */
+		var = __raw_readl(EMIF_SDRAM_CONFIG_EXT);
+		var |= DYNAMIC_PWR_DOWN;
+		__raw_writel(var, EMIF_SDRAM_CONFIG_EXT);
+
+		/* Additional weak pull down for DQ, DM */
+		__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA2_IOCTRL);
+		__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA3_IOCTRL);
+	} else if (mem_type ==  MEM_TYPE_DDR3) {
 		/* Weak pull down for macro CMD0/1 */
-//		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD0_IOCTRL);
-//		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD1_IOCTRL);
+		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD0_IOCTRL);
+		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD1_IOCTRL);
 
 		/*
 		 * Weak pull down for macro CMD2
 		 * exception: keep DDR_RESET pullup
 		 */
-//		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD2_IOCTRL);
+		__raw_writel(SUSP_IO_PULL_CMD2, DDR_CMD2_IOCTRL);
+	}
 
 }
 
@@ -74,18 +76,21 @@ void ddr_io_resume(void)
 		__raw_writel(var, DDR_IO_CTRL_REG);
 	}
 
-	/* Different sleep sequences for DDR2 and DDR3 */
-	/* Disable the pull for CMD2/1/0 */
-//		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD2_IOCTRL);
-//		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD1_IOCTRL);
-//		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD0_IOCTRL);
+	/* Different sleep sequences for memory types */
+	if (mem_type == MEM_TYPE_LPDDR2) {
+		__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA3_IOCTRL);
+		__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA2_IOCTRL);
+	} else if (mem_type == MEM_TYPE_DDR3) {
+		/* Disable the pull for CMD2/1/0 */
+		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD2_IOCTRL);
+		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD1_IOCTRL);
+		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD0_IOCTRL);
+	}
 
 	/* Disable the pull for DATA1/0 */
+	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA1_IOCTRL);
+	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA0_IOCTRL);
 
-//	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA3_IOCTRL);
-//	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA2_IOCTRL);
-//	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA1_IOCTRL);
-//	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA0_IOCTRL);
 }
 
 /* same offsets for SA and Aegis */

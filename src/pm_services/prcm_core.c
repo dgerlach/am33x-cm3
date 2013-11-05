@@ -204,13 +204,13 @@ void clear_wake_sources(void)
 void ds_save(void)
 {
 	//if (soc_id == AM335X_SOC_ID) {
-		set_ddr_reset();
+		//set_ddr_reset();
 
 		ddr_io_suspend();
 
-		vtt_low();
+		//vtt_low();
 
-		vtp_disable();
+		//vtp_disable();
 
 		ldo_power_down(LDO_MPU);
 
@@ -233,16 +233,16 @@ void ds_restore(void)
 
 		ldo_power_up(LDO_MPU);
 
-		vtp_enable();
+		//vtp_enable();
 
 		/* XXX: Why is this required here for DDR3? */
 		//hwmod_enable(HWMOD_EMIF);
 
-		vtt_high();
+		//vtt_high();
 
 		ddr_io_resume();
 
-		clear_ddr_reset();
+		//clear_ddr_reset();
 	//}
 }
 
