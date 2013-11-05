@@ -87,7 +87,8 @@ void a8_lp_ds0_handler(struct cmd_data *data)
 	if (cmd_handlers[cmd_global_data.cmd_id].do_ddr)
 		ds_save();
 
-	//a8_i2c_sleep_handler(data->i2c_sleep_offset);
+	if (soc_id == AM335X_SOC_ID)
+		a8_i2c_sleep_handler(data->i2c_sleep_offset);
 
 	configure_wake_sources(local_cmd->wake_sources);
 
@@ -347,7 +348,8 @@ void generic_wake_handler(int wakeup_reason)
 
 	pm_reset();
 
-	a8_i2c_wake_handler(cmd_global_data.i2c_wake_offset);
+	if (soc_id == AM335X_SOC_ID)
+		a8_i2c_wake_handler(cmd_global_data.i2c_wake_offset);
 
 	/* Enable only the MBX IRQ */
 	nvic_enable_irq(CM3_IRQ_MBINT0);
