@@ -76,6 +76,11 @@ void ddr_io_resume(void)
 		__raw_writel(var, DDR_IO_CTRL_REG);
 	}
 
+	/* TEMP: Must debug why AM43XX does not want IO_CONFIG restored */
+
+	if(soc_id == AM43XX_SOC_ID)
+		return;
+
 	/* Different sleep sequences for memory types */
 	if (mem_type == MEM_TYPE_LPDDR2) {
 		__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA3_IOCTRL);
