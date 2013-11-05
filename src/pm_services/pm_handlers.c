@@ -114,7 +114,7 @@ void a8_lp_ds0_handler(struct cmd_data *data)
 	interconnect_hwmods_disable();
 
 	/* DPLL retention update for PG 2.0 */
-	//plls_power_down();
+	plls_power_down();
 
 	clkdm_sleep(CLKDM_MPU);
 
@@ -387,7 +387,7 @@ void a8_wake_ds0_handler(void)
 
 	clkdms_wake();
 
-	//plls_power_up();
+	plls_power_up();
 
 	interconnect_hwmods_enable();
 
