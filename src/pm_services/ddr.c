@@ -78,7 +78,7 @@ void ddr_io_resume(void)
 
 	/* TEMP: Must debug why AM43XX does not want IO_CONFIG restored */
 
-	if(soc_id == AM43XX_SOC_ID)
+	if (soc_id == AM43XX_SOC_ID && mem_type == MEM_TYPE_LPDDR2)
 		return;
 
 	/* Different sleep sequences for memory types */
