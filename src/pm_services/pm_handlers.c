@@ -84,13 +84,20 @@ void a8_lp_ds0_handler(struct cmd_data *data)
 	unsigned int mpu_st;
 	int temp;
 
+	volatile int hold =0x12341234;
+
+	__raw_writel(0x00000000, 0x44df8a60);
+	__raw_writel(0x00000000, 0x44df8a68);
+
+
 	if (cmd_handlers[cmd_global_data.cmd_id].do_ddr)
 		ds_save();
 
-	if (soc_id == AM335X_SOC_ID)
-		a8_i2c_sleep_handler(data->i2c_sleep_offset);
+	a8_i2c_sleep_handler(data->i2c_sleep_offset);
 
 	configure_wake_sources(local_cmd->wake_sources);
+
+	__raw_writel(0x00000000, 0x44e1131c);
 
 	/* TODO: Check for valid range */
 	if (local_cmd->deepsleep_count)
@@ -348,8 +355,7 @@ void generic_wake_handler(int wakeup_reason)
 
 	pm_reset();
 
-	if (soc_id == AM335X_SOC_ID)
-		a8_i2c_wake_handler(cmd_global_data.i2c_wake_offset);
+	a8_i2c_wake_handler(cmd_global_data.i2c_wake_offset);
 
 	/* Enable only the MBX IRQ */
 	nvic_enable_irq(CM3_IRQ_MBINT0);

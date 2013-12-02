@@ -50,6 +50,8 @@ void ddr_io_suspend(void)
 		/* Additional weak pull down for DQ, DM */
 		__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA2_IOCTRL);
 		__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA3_IOCTRL);
+		__raw_writel(0x08000000, 0x44e11408);
+		__raw_writel(0xFFFFFFFF, 0x44e1140C);
 	} else if (mem_type ==  MEM_TYPE_DDR3) {
 		/* Weak pull down for macro CMD0/1 */
 		__raw_writel(SUSP_IO_PULL_CMD1, DDR_CMD0_IOCTRL);
@@ -83,18 +85,22 @@ void ddr_io_resume(void)
 
 	/* Different sleep sequences for memory types */
 	if (mem_type == MEM_TYPE_LPDDR2) {
-		__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA3_IOCTRL);
-		__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA2_IOCTRL);
+		__raw_writel(0x20000294, DDR_DATA3_IOCTRL);
+		__raw_writel(0x20000294, DDR_DATA2_IOCTRL);
+		__raw_writel(0x20000294, DDR_DATA1_IOCTRL);
+		__raw_writel(0x20000294, DDR_DATA0_IOCTRL);
+		__raw_writel(0x00000000, 0x44e11408);
+		__raw_writel(0x00000000, 0x44e1140C);
 	} else if (mem_type == MEM_TYPE_DDR3) {
 		/* Disable the pull for CMD2/1/0 */
 		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD2_IOCTRL);
 		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD1_IOCTRL);
 		__raw_writel(RESUME_IO_PULL_CMD, DDR_CMD0_IOCTRL);
+		__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA1_IOCTRL);
+		__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA0_IOCTRL);
 	}
 
 	/* Disable the pull for DATA1/0 */
-	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA1_IOCTRL);
-	__raw_writel(RESUME_IO_PULL_DATA, DDR_DATA0_IOCTRL);
 
 }
 
