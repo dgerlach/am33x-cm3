@@ -210,8 +210,7 @@ void ds_save(void)
 
 	vtt_low();
 
-	if (mem_type == MEM_TYPE_DDR3)
-		vtp_disable();
+	vtp_disable();
 
 	ldo_power_down(LDO_MPU);
 
@@ -232,8 +231,7 @@ void ds_restore(void)
 
 	ldo_power_up(LDO_MPU);
 
-	if (mem_type == MEM_TYPE_DDR3)
-		vtp_enable();
+	vtp_enable();
 
 	/* XXX: Why is this required here for DDR3? */
 	hwmod_enable(HWMOD_EMIF);
