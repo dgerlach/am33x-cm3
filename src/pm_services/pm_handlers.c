@@ -84,12 +84,6 @@ void a8_lp_ds0_handler(struct cmd_data *data)
 	unsigned int mpu_st;
 	int temp;
 
-	volatile int hold =0x12341234;
-
-	__raw_writel(0x00000000, 0x44df8a60);
-	__raw_writel(0x00000000, 0x44df8a68);
-
-
 	if (cmd_handlers[cmd_global_data.cmd_id].do_ddr)
 		ds_save();
 
@@ -97,7 +91,6 @@ void a8_lp_ds0_handler(struct cmd_data *data)
 
 	configure_wake_sources(local_cmd->wake_sources);
 
-	__raw_writel(0x00000000, 0x44e1131c);
 
 	/* TODO: Check for valid range */
 	if (local_cmd->deepsleep_count)
