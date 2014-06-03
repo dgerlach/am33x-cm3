@@ -22,12 +22,12 @@
  * on certain IOs of DATA and CMD macros
  */
 #define SUSP_IO_PULL_DATA		0x3FF00003
-#define SUSP_IO_PULL_CMD1_DDR3		0xFFE0018B
-#define SUSP_IO_PULL_CMD2_DDR3		0xFFA0098B
-#define SUSP_IO_PULL_CMD1_LPDDR2	0x08000000
+#define SUSP_IO_PULL_CMD1_DDR3		0x08000000
+#define SUSP_IO_PULL_CMD2_DDR3		0xF7FFFFFF
+#define SUSP_IO_PULL_CMD1_LPDDR2	0x00000000
 #define SUSP_IO_PULL_CMD2_LPDDR2	0xFFFFFFFF
-#define RESUME_IO_PULL_DATA_DDR3	0x18B
-#define RESUME_IO_PULL_CMD_DDR3		0x18B
+#define RESUME_IO_PULL_DATA_DDR3	0x84
+#define RESUME_IO_PULL_CMD_DDR3		0x0
 #define RESUME_IO_PULL_DATA_LPDDR2	0x20000294
 #define RESUME_IO_PULL_CMD_LPDDR2	0x0
 
@@ -61,9 +61,12 @@ void ddr_io_suspend(void)
 		__raw_writel(SUSP_IO_PULL_CMD2_LPDDR2, DDR_CMD2_IOCTRL);
 	} else if (mem_type ==  MEM_TYPE_DDR3) {
 		/* Weak pull down for macro CMD0/1 */
-		__raw_writel(SUSP_IO_PULL_CMD1_DDR3, DDR_CMD0_IOCTRL);
 		__raw_writel(SUSP_IO_PULL_CMD1_DDR3, DDR_CMD1_IOCTRL);
 
+		if (soc_id == AM43XX_SOC_ID) {
+			__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA2_IOCTRL);
+			__raw_writel(SUSP_IO_PULL_DATA, DDR_DATA3_IOCTRL);
+		}
 		/*
 		 * Weak pull down for macro CMD2
 		 * exception: keep DDR_RESET pullup
@@ -99,10 +102,14 @@ void ddr_io_resume(void)
 		/* Disable the pull for CMD2/1/0 */
 		__raw_writel(RESUME_IO_PULL_CMD_DDR3, DDR_CMD2_IOCTRL);
 		__raw_writel(RESUME_IO_PULL_CMD_DDR3, DDR_CMD1_IOCTRL);
-		__raw_writel(RESUME_IO_PULL_CMD_DDR3, DDR_CMD0_IOCTRL);
 		/* Disable the pull for DATA1/0 */
-		__raw_writel(RESUME_IO_PULL_DATA_DDR3, DDR_DATA1_IOCTRL);
 		__raw_writel(RESUME_IO_PULL_DATA_DDR3, DDR_DATA0_IOCTRL);
+		__raw_writel(RESUME_IO_PULL_DATA_DDR3, DDR_DATA1_IOCTRL);
+
+		if (soc_id == AM43XX_SOC_ID) {
+			__raw_writel(RESUME_IO_PULL_DATA_DDR3, DDR_DATA2_IOCTRL);
+			__raw_writel(RESUME_IO_PULL_DATA_DDR3, DDR_DATA3_IOCTRL);
+		}
 	}
 }
 
