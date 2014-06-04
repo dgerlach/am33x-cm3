@@ -27,6 +27,12 @@ SECTIONS
         *(.data*)
         _end_data = .;
     } > DMEM
+    .resource_table :
+    {
+        _start_resource_table = .;
+        *(.resource_table)
+	_end_resource_table = .;
+    } > DMEM
     .bss :
     {
         _start_bss = .;

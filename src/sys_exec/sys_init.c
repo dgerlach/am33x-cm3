@@ -16,6 +16,7 @@
 #include <msg.h>
 #include <trace.h>
 #include <sync.h>
+#include "rsc_table.h"
 
 int am335_init(void)
 {
